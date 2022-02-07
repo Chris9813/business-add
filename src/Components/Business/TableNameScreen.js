@@ -4,6 +4,7 @@ import { Redirect, useHistory } from "react-router-dom";
 import MaterialTable from "material-table";
 import { Modal, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -25,13 +26,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Table = () => {
+export const TableNameScreen = () => {
   const history = useHistory();
+  const { businessId } = useParams();
 
   const columns = [
     {
       title: "Name",
       field: "name",
+    },
+    {
+      title: "Role",
+      field: "role",
     },
   ];
 
@@ -41,10 +47,15 @@ export const Table = () => {
   const [modalInst, setModalInst] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+  const [tableView, setTableView] = useState(true);
 
   const [itemSelect, setItemSelect] = useState({
+    email: "",
     name: "",
-    businessId: 0,
+    phone: 0,
+    role: "",
+    join_date: 0,
+    personId: 0,
   });
 
   const handleInputChange = (e) => {
@@ -70,7 +81,7 @@ export const Table = () => {
   const getData = async () => {
     await axios
       .get(
-        "https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business",
+        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons`,
         {
           headers: {
             "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
@@ -78,7 +89,7 @@ export const Table = () => {
         }
       )
       .then((res) => {
-        setData(res.data.businesses);
+        setData(res.data.persons);
       })
       .catch((error) => {
         console.error(error);
@@ -86,11 +97,16 @@ export const Table = () => {
   };
 
   const postData = async () => {
+    console.log(itemSelect.email);
     await axios
       .post(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business`,
+        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons`,
         {
+          email: itemSelect.email,
           name: itemSelect.name,
+          phone: itemSelect.phone,
+          role: itemSelect.role,
+          join_date: itemSelect.join_date,
         },
         {
           headers: {
@@ -99,7 +115,7 @@ export const Table = () => {
         }
       )
       .then((res) => {
-        setData(data.concat(res.data));
+        console.log(data.concat(res.data));
         getData();
         openCloseModal();
       })
@@ -109,11 +125,16 @@ export const Table = () => {
   };
 
   const putData = async () => {
+    console.log(itemSelect);
     await axios
       .put(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${itemSelect.businessId}`,
+        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons/${itemSelect.personId}`,
         {
+          email: itemSelect.email,
           name: itemSelect.name,
+          phone: itemSelect.phone,
+          role: itemSelect.role,
+          join_date: itemSelect.join_date,
         },
         {
           headers: {
@@ -125,8 +146,12 @@ export const Table = () => {
       .then((res) => {
         let dataNew = data;
         dataNew.map((item) => {
-          if (item.businessId === itemSelect.businessId) {
+          if (item.personId === itemSelect.personId) {
+            item.email = itemSelect.email;
             item.name = itemSelect.name;
+            item.phone = itemSelect.phone;
+            item.role = itemSelect.role;
+            item.join_date = itemSelect.join_date;
           }
         });
         setData(dataNew);
@@ -141,7 +166,7 @@ export const Table = () => {
     console.log(itemSelect.businessId);
     await axios
       .delete(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${itemSelect.businessId}`,
+        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons/${itemSelect.personId}`,
         {
           headers: {
             "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
@@ -149,9 +174,7 @@ export const Table = () => {
         }
       )
       .then((res) => {
-        setData(
-          data.filter((item) => item.businessId !== itemSelect.businessId)
-        );
+        setData(data.filter((item) => item.personId !== itemSelect.personId));
         openCloseModalDelete();
       })
       .catch((error) => {
@@ -165,7 +188,7 @@ export const Table = () => {
   };
 
   const handleInfo = (item) => {
-    history.push(`/business/${item.businessId}`);
+    history.push(`/business/${businessId}/${item.personId}`);
   };
 
   const bodyInsertar = (
@@ -174,8 +197,32 @@ export const Table = () => {
       <br />
       <TextField
         className={styles.inputMaterial}
-        label="Title"
+        label="Email"
+        name="email"
+        onChange={handleInputChange}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Name"
         name="name"
+        onChange={handleInputChange}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Phone"
+        name="phone"
+        onChange={handleInputChange}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Role"
+        name="role"
+        onChange={handleInputChange}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Join Date"
+        name="join_date"
         onChange={handleInputChange}
       />
       <br />
@@ -199,10 +246,38 @@ export const Table = () => {
       <br />
       <TextField
         className={styles.inputMaterial}
-        label="Title"
+        label="Email"
+        name="email"
+        onChange={handleInputChange}
+        value={itemSelect && itemSelect.email}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Name"
         name="name"
         onChange={handleInputChange}
         value={itemSelect && itemSelect.name}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Phone"
+        name="phone"
+        onChange={handleInputChange}
+        value={itemSelect && itemSelect.phone}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Role"
+        name="role"
+        onChange={handleInputChange}
+        value={itemSelect && itemSelect.role}
+      />
+      <TextField
+        className={styles.inputMaterial}
+        label="Join Date"
+        name="join_date"
+        onChange={handleInputChange}
+        value={itemSelect && itemSelect.join_date}
       />
       <br />
       <div align="right">
@@ -217,7 +292,7 @@ export const Table = () => {
   const bodyEliminar = (
     <div className={styles.modal}>
       <p>
-        Estás seguro que deseas eliminar el item
+        Estás seguro que deseas eliminar el item{" "}
         <b>{itemSelect && itemSelect.name}</b>?
       </p>
       <div align="right">
@@ -243,37 +318,62 @@ export const Table = () => {
           style={{ borderRadius: "12px" }}
           onClick={() => openCloseModal()}
         >
-          Create Business
+          Create Person
         </button>
-        <button className="btn mt-1">
+        <button
+          className="btn mt-1 pb-4"
+          onClick={() => setTableView(!tableView)}
+        >
           <i className="fas fa-vector-square fa-2x"></i>
         </button>
       </div>
-      <MaterialTable
-        data={data}
-        columns={columns}
-        title="Business"
-        actions={[
-          {
-            icon: "edit",
-            tooltip: "Edit Item",
-            onClick: (evento, rowData) => selectItem(rowData, "editar"),
-          },
-          {
-            icon: "delete",
-            tooltip: "Delete Item",
-            onClick: (evento, rowData) => selectItem(rowData, "eliminar"),
-          },
-          {
-            icon: "search",
-            tooltip: "Info",
-            onClick: (evento, rowData) => handleInfo(rowData),
-          },
-        ]}
-        options={{
-          actionsColumnIndex: -1,
-        }}
-      />
+
+      {tableView ? (
+        <MaterialTable
+          data={data}
+          columns={columns}
+          title="BusinessName"
+          actions={[
+            {
+              icon: "edit",
+              tooltip: "Edit Item",
+              onClick: (evento, rowData) => selectItem(rowData, "editar"),
+            },
+            {
+              icon: "delete",
+              tooltip: "Delete Item",
+              onClick: (evento, rowData) => selectItem(rowData, "eliminar"),
+            },
+            {
+              icon: "search",
+              tooltip: "Info",
+              onClick: (evento, rowData) => handleInfo(rowData),
+            },
+          ]}
+          options={{
+            actionsColumnIndex: -1,
+          }}
+        />
+      ) : (
+        data.map((item) => (
+          <div className="d-flex row-cols-1">
+            <div className="row row-cols-1 row-cols-lg-2 g-3 g-lg-2 my-3">
+              <div className="card col">
+                <div className="p-3">
+                  <div className="card-body">
+                    <h5 className="card-title">{item.name}</h5>
+                    <h6 className="card-subtitle mb-2 text-muted">
+                      {item.role}
+                    </h6>
+                    <p className="card-text">{item.email}</p>
+                    <p className="card-text">{item.phone}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
       <Modal open={modalInst} onClose={openCloseModal}>
         {bodyInsertar}
       </Modal>

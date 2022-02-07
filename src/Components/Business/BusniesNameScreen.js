@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Redirect } from "react-router-dom";
 import axios from "axios";
 
-import { data } from "../../helpers/data";
 import { NavBar } from "../ui/NavBar";
 import { Table } from "./Table";
+import { TableNameScreen } from "./TableNameScreen";
+import { useParams } from "react-router-dom";
 
-export const BusniesNameScreen = ({ history }) => {
-  const { businessId } = useParams();
-
+export const BusniesNameScreen = () => {
   const [data, setData] = useState([]);
-  const [name, setName] = useState("");
 
   const getData = async () => {
     await axios
       .get(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons`,
+        "https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/e98efaa8-a100-4dbd-a995-ab16655b3f08/persons",
         {
           headers: {
             "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
@@ -23,25 +20,7 @@ export const BusniesNameScreen = ({ history }) => {
         }
       )
       .then((res) => {
-        setData(res.data.persons);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const getName = async () => {
-    await axios
-      .get(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}`,
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        }
-      )
-      .then((res) => {
-        setName(res.data.name);
+        setData(res.data.businesses);
       })
       .catch((error) => {
         console.error(error);
@@ -50,8 +29,9 @@ export const BusniesNameScreen = ({ history }) => {
 
   useEffect(() => {
     getData();
-    getName();
   }, []);
+
+  console.log(data);
 
   /*
   const names = Object.keys(business[0].people);
@@ -72,10 +52,7 @@ export const BusniesNameScreen = ({ history }) => {
         <NavBar />
       </div>
       <div className="col-sm-8 mx-4">
-        <h2>
-          <b>{name}</b>
-        </h2>
-        <Table data={data} />
+        <TableNameScreen />
       </div>
     </div>
   );

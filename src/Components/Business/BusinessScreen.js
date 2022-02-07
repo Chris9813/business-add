@@ -32,7 +32,7 @@ export const BusinessScreen = () => {
   console.log(data);
 
   return (
-    <div className="">
+    <div className="container">
       <div className="row">
         <div className="col-sm-2 mx-4">
           <NavBar />
