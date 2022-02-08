@@ -173,8 +173,8 @@ export const Table = () => {
   return (
     <div style={{ maxWidth: "100%" }}>
       <div className="d-flex justify-content-start">
-        <h2>Business Screen</h2>
-        <div className="col-8 d-flex justify-content-end">
+        <h2>Business</h2>
+        <div className="col-10 d-flex justify-content-end">
           <button
             type="button"
             className="btn btn-dark my-2 mx-2"

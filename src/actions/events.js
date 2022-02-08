@@ -1,4 +1,3 @@
-import axios from "axios";
 import { fetchSinToken } from "../helpers/fetch";
 import { types } from "../types/types";
 

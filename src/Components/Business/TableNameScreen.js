@@ -216,7 +216,7 @@ export const TableNameScreen = () => {
   return (
     <div style={{ maxWidth: "100%" }}>
       <div className="d-flex justify-content-start">
-        <h2>BusinessName</h2>
+        <h2>Business Name</h2>
         <div className="col-8 d-flex justify-content-end">
           <button
             type="button"
