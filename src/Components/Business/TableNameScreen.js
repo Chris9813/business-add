@@ -5,6 +5,13 @@ import MaterialTable from "material-table";
 import { Modal, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  eventStartAddNew,
+  eventStartUpdate,
+  eventStartLoading,
+  eventStartDelete,
+} from "../../actions/events";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -27,8 +34,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const TableNameScreen = () => {
+  const { events } = useSelector((state) => state.business);
+  console.log(events);
   const history = useHistory();
   const { businessId } = useParams();
+  const dispatch = useDispatch();
 
   const columns = [
     {
@@ -79,6 +89,8 @@ export const TableNameScreen = () => {
   };
 
   const getData = async () => {
+    dispatch(eventStartLoading(businessId));
+    /*
     await axios
       .get(
         `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons`,
@@ -90,17 +102,17 @@ export const TableNameScreen = () => {
       )
       .then((res) => {
         setData(res.data.persons);
+        dispatch(eventStartLoading(res.data.persons));
       })
       .catch((error) => {
         console.error(error);
       });
+      */
   };
 
   const postData = async () => {
-    console.log(itemSelect.email);
-    await axios
-      .post(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons`,
+    dispatch(
+      eventStartAddNew(
         {
           email: itemSelect.email,
           name: itemSelect.name,
@@ -108,78 +120,28 @@ export const TableNameScreen = () => {
           role: itemSelect.role,
           join_date: itemSelect.join_date,
         },
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        }
+        businessId
       )
-      .then((res) => {
-        console.log(data.concat(res.data));
-        getData();
-        openCloseModal();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    );
+    openCloseModal();
+    getData();
   };
 
   const putData = async () => {
-    console.log(itemSelect);
-    await axios
-      .put(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons/${itemSelect.personId}`,
-        {
-          email: itemSelect.email,
-          name: itemSelect.name,
-          phone: itemSelect.phone,
-          role: itemSelect.role,
-          join_date: itemSelect.join_date,
-        },
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        },
-        itemSelect
-      )
-      .then((res) => {
-        let dataNew = data;
-        dataNew.map((item) => {
-          if (item.personId === itemSelect.personId) {
-            item.email = itemSelect.email;
-            item.name = itemSelect.name;
-            item.phone = itemSelect.phone;
-            item.role = itemSelect.role;
-            item.join_date = itemSelect.join_date;
-          }
-        });
-        setData(dataNew);
-        openCloseModalEdit();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const data = {
+      email: itemSelect.email,
+      name: itemSelect.name,
+      phone: itemSelect.phone,
+      role: itemSelect.role,
+      join_date: itemSelect.join_date,
+    };
+    dispatch(eventStartUpdate(businessId, itemSelect.personId, data));
+    openCloseModalEdit();
   };
 
   const deleteData = async () => {
-    console.log(itemSelect.businessId);
-    await axios
-      .delete(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons/${itemSelect.personId}`,
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        }
-      )
-      .then((res) => {
-        setData(data.filter((item) => item.personId !== itemSelect.personId));
-        openCloseModalDelete();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    dispatch(eventStartDelete(businessId, itemSelect.personId));
+    openCloseModalDelete();
   };
 
   const selectItem = (item, cas) => {
@@ -305,6 +267,7 @@ export const TableNameScreen = () => {
   );
 
   useEffect(() => {
+    eventStartLoading(businessId);
     getData();
   }, []);
 
@@ -330,7 +293,7 @@ export const TableNameScreen = () => {
 
       {tableView ? (
         <MaterialTable
-          data={data}
+          data={events}
           columns={columns}
           title="BusinessName"
           actions={[

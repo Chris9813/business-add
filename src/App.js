@@ -4,14 +4,13 @@ import { NavBarUp } from "./Components/ui/NavBarUp";
 import { DeshboardRoutes } from "./routers/DeshboardRoutes";
 import { store } from "./store/store";
 
-
 function App() {
   return (
     <div>
-    <Provider store={store}>
-        <NavBarUp/>
+      <Provider store={store}>
+        <NavBarUp />
         <DeshboardRoutes />
-    </Provider>
+      </Provider>
     </div>
   );
 }
