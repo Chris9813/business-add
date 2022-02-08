@@ -2,7 +2,7 @@ import React from "react";
 
 export const NavBar = () => {
   return (
-    <div className="align-middle mt-5">
+    <div className="align-middle mt-5 d-flex justify-content-lg-start">
       <ul className="list-group list-group-flush">
         <li
           className="list-group-item "

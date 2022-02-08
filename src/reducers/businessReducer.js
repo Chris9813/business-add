@@ -9,7 +9,7 @@ export const businessReducer = (state = initialState, action) => {
     case types.eventAddNew:
       return {
         ...state,
-        events: [...state.events, action.payload],
+        events: [action.payload, ...state.events],
       };
 
     case types.eventLoaded:

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import MaterialTable from "material-table";
 import { Modal, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,6 +10,7 @@ import {
   businessStartUpdate,
   eventStartAddNew,
 } from "../../actions/business";
+import { BusinessCard } from "./BusinessCard";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
+    borderRadius: "12px",
   },
   iconos: {
     cursor: "pointer",
@@ -46,7 +47,6 @@ export const Table = () => {
 
   const styles = useStyles();
 
-  const [data, setData] = useState([]);
   const [modalInst, setModalInst] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -77,52 +77,9 @@ export const Table = () => {
     setModalDelete(!modalDelete);
   };
 
-  const getData = async () => {
-    dispatch(businessStartLoading());
-    /*
-    await axios
-      .get(
-        "https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business",
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        }
-      )
-      .then((res) => {
-        setData(res.data.businesses);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-      */
-  };
-
   const postData = async () => {
     dispatch(eventStartAddNew({ name: itemSelect.name }));
     openCloseModal();
-    /*
-    await axios
-      .post(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business`,
-        {
-          name: itemSelect.name,
-        },
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        }
-      )
-      .then((res) => {
-        setData(data.concat(res.data));
-        getData();
-        openCloseModal();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-      */
   };
 
   const putData = async () => {
@@ -132,59 +89,11 @@ export const Table = () => {
       })
     );
     openCloseModalEdit();
-    /*
-    await axios
-      .put(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${itemSelect.businessId}`,
-        {
-          name: itemSelect.name,
-        },
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        },
-        itemSelect
-      )
-      .then((res) => {
-        let dataNew = data;
-        dataNew.map((item) => {
-          if (item.businessId === itemSelect.businessId) {
-            item.name = itemSelect.name;
-          }
-        });
-        setData(dataNew);
-        openCloseModalEdit();
-      })
-      .catch((error) => {
-        console.error(error);
-      });*/
   };
 
   const deleteData = async () => {
-    console.log(itemSelect.businessId);
     dispatch(businessStartDelete(itemSelect.businessId));
     openCloseModalDelete();
-    /*
-    await axios
-      .delete(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${itemSelect.businessId}`,
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        }
-      )
-      .then((res) => {
-        setData(
-          data.filter((item) => item.businessId !== itemSelect.businessId)
-        );
-        openCloseModalDelete();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-      */
   };
 
   const selectItem = (item, cas) => {
@@ -258,25 +167,28 @@ export const Table = () => {
   );
 
   useEffect(() => {
-    getData();
-  }, []);
+    dispatch(businessStartLoading());
+  }, [dispatch]);
 
   return (
     <div style={{ maxWidth: "100%" }}>
-      <hr />
-      <div className="col-sm-5 d-flex justify-content-start">
-        <button
-          type="button"
-          className="btn btn-dark my-4 mx-2"
-          style={{ borderRadius: "12px" }}
-          onClick={() => openCloseModal()}
-        >
-          Create Business
-        </button>
-        <button onClick={() => setTableView(!tableView)} className="btn mt-1">
-          <i className="fas fa-vector-square fa-2x"></i>
-        </button>
+      <div className="d-flex justify-content-start">
+        <h2>Business Screen</h2>
+        <div className="col-8 d-flex justify-content-end">
+          <button
+            type="button"
+            className="btn btn-dark my-2 mx-2"
+            style={{ borderRadius: "12px" }}
+            onClick={() => openCloseModal()}
+          >
+            Create Business
+          </button>
+          <button className="btn" onClick={() => setTableView(!tableView)}>
+            <i className="fas fa-vector-square fa-2x"></i>
+          </button>
+        </div>
       </div>
+      <hr />
       {tableView ? (
         <MaterialTable
           data={business}
@@ -304,19 +216,7 @@ export const Table = () => {
           }}
         />
       ) : (
-        business.map((item) => (
-          <div className="d-flex row-cols-1">
-            <div className="row row-cols-1 row-cols-lg-2 g-3 g-lg-2 my-3">
-              <div className="card col">
-                <div className="p-3">
-                  <div className="card-body">
-                    <h5 className="card-title">{item.name}</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))
+        business.map((item, i) => <BusinessCard item={item} key={i} />)
       )}
       <Modal open={modalInst} onClose={openCloseModal}>
         {bodyInsertar}

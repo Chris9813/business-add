@@ -7,8 +7,8 @@ export const types = {
   eventUpdate: "[event] Update Event",
   eventDelated: "[event] Delete Event",
 
-  businessAddNew: "[business] Add New Event",
-  businessLoaded: "[business] Loaded Events ",
-  businessUpdate: "[business] Update Event",
-  businessDelated: "[business] Delete Event",
+  businessAddNew: "[business] Add New Business",
+  businessLoaded: "[business] Loaded Business ",
+  businessUpdate: "[business] Update Business",
+  businessDelated: "[business] Delete Business",
 };

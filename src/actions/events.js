@@ -29,11 +29,7 @@ export const eventStartAddNew = (event, businessId) => {
         event,
         "POST"
       );
-      const body = await resp.json();
-
-      if (body.ok) {
-        dispatch(eventAddNew(event));
-      }
+      dispatch(eventAddNew(event));
     } catch (error) {
       console.log(error);
     }

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { fetchSinToken } from "../helpers/fetch";
 import { types } from "../types/types";
 
@@ -67,44 +66,3 @@ const businessDeleted = (businessId) => ({
   type: types.businessDelated,
   payload: businessId,
 });
-
-/*
-export const eventStartDelete = () => {
-  return async (dispatch, getState) => {
-    const { id } = getState().calendar.activeEvent;
-    try {
-      const resp = await fetchConToken(`events/${id}`, {}, "DELETE");
-      const body = await resp.json();
-      if (body.ok) {
-        dispatch(eventDeleted());
-      } else {
-        Swal.fire("Error", body.msg, "error");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
-const eventDeleted = () => ({
-  type: types.eventDelated,
-});
-
-export const eventStartLoading = () => {
-  return async (dispatch) => {
-    try {
-      const resp = await fetchConToken("events");
-      const body = await resp.json();
-      const events = prepareEvents(body.eventos);
-      dispatch(eventLoadaded(events));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
-const eventLoadaded = (events) => ({
-  type: types.eventLoaded,
-  payload: events,
-});
-*/

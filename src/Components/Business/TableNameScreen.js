@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import MaterialTable from "material-table";
 import { Modal, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -12,6 +11,7 @@ import {
   eventStartLoading,
   eventStartDelete,
 } from "../../actions/events";
+import { BusinessCard } from "./BusinessCard";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const TableNameScreen = () => {
   const { events } = useSelector((state) => state.business);
-  console.log(events);
   const history = useHistory();
   const { businessId } = useParams();
   const dispatch = useDispatch();
@@ -88,30 +87,7 @@ export const TableNameScreen = () => {
     setModalDelete(!modalDelete);
   };
 
-  const getData = async () => {
-    dispatch(eventStartLoading(businessId));
-    /*
-    await axios
-      .get(
-        `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${businessId}/persons`,
-        {
-          headers: {
-            "x-api-key": `l2pm2JpvCY4FR1FwQbGb33Qu1wJhZwDH9BlrkcdZ`,
-          },
-        }
-      )
-      .then((res) => {
-        setData(res.data.persons);
-        dispatch(eventStartLoading(res.data.persons));
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-      */
-  };
-
   const postData = async () => {
-    console.log(itemSelect);
     dispatch(
       eventStartAddNew(
         {
@@ -125,7 +101,6 @@ export const TableNameScreen = () => {
       )
     );
     openCloseModal();
-    getData();
   };
 
   const putData = async () => {
@@ -234,29 +209,29 @@ export const TableNameScreen = () => {
   );
 
   useEffect(() => {
-    eventStartLoading(businessId);
-    getData();
-  }, []);
+    dispatch(eventStartLoading(businessId));
+    console.log("hey");
+  }, [dispatch]);
 
   return (
     <div style={{ maxWidth: "100%" }}>
-      <hr />
-      <div className="col-sm-5 d-flex justify-content-start">
-        <button
-          type="button"
-          className="btn btn-dark my-4 mx-2"
-          style={{ borderRadius: "12px" }}
-          onClick={() => openCloseModal()}
-        >
-          Create Person
-        </button>
-        <button
-          className="btn mt-1 pb-4"
-          onClick={() => setTableView(!tableView)}
-        >
-          <i className="fas fa-vector-square fa-2x"></i>
-        </button>
+      <div className="d-flex justify-content-start">
+        <h2>BusinessName</h2>
+        <div className="col-8 d-flex justify-content-end">
+          <button
+            type="button"
+            className="btn btn-dark my-2 mx-2"
+            style={{ borderRadius: "12px" }}
+            onClick={() => openCloseModal()}
+          >
+            Create Person
+          </button>
+          <button className="btn" onClick={() => setTableView(!tableView)}>
+            <i className="fas fa-vector-square fa-2x"></i>
+          </button>
+        </div>
       </div>
+      <hr />
 
       {tableView ? (
         <MaterialTable
@@ -280,24 +255,7 @@ export const TableNameScreen = () => {
           }}
         />
       ) : (
-        events.map((item) => (
-          <div className="d-flex row-cols-1">
-            <div className="row row-cols-1 row-cols-lg-2 g-3 g-lg-2 my-3">
-              <div className="card col">
-                <div className="p-3">
-                  <div className="card-body">
-                    <h5 className="card-title">{item.name}</h5>
-                    <h6 className="card-subtitle mb-2 text-muted">
-                      {item.role}
-                    </h6>
-                    <p className="card-text">{item.email}</p>
-                    <p className="card-text">{item.phone}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))
+        events.map((item, i) => <BusinessCard item={item} key={i} />)
       )}
       <Modal open={modalInst} onClose={openCloseModal}>
         {bodyInsertar}

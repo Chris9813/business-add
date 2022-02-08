@@ -9,7 +9,7 @@ export const businessScreenReducer = (state = initialState, action) => {
     case types.businessAddNew:
       return {
         ...state,
-        business: [...state.business, action.payload],
+        business: [action.payload, ...state.business],
       };
 
     case types.businessLoaded:
@@ -30,6 +30,12 @@ export const businessScreenReducer = (state = initialState, action) => {
       return {
         ...state,
         business: state.business.filter((e) => e.businessId !== action.payload),
+      };
+
+    case types.setActive:
+      return {
+        ...state,
+        businessActive: action.payload,
       };
 
     default:
