@@ -2,6 +2,7 @@ import thunk from "redux-thunk";
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { authReducer } from "../reducers/authReducer";
 import { businessReducer } from "../reducers/businessReducer";
+import { businessScreenReducer } from "../reducers/businessScreenReducer";
 
 const composeEnhancers =
   (typeof window !== "undefined" &&
@@ -11,6 +12,7 @@ const composeEnhancers =
 const reducers = combineReducers({
   auth: authReducer,
   business: businessReducer,
+  businessScreen: businessScreenReducer,
 });
 
 export const store = createStore(

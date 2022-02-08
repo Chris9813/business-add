@@ -111,6 +111,7 @@ export const TableNameScreen = () => {
   };
 
   const postData = async () => {
+    console.log(itemSelect);
     dispatch(
       eventStartAddNew(
         {
@@ -147,10 +148,6 @@ export const TableNameScreen = () => {
   const selectItem = (item, cas) => {
     setItemSelect(item);
     cas === "editar" ? openCloseModalEdit() : openCloseModalDelete();
-  };
-
-  const handleInfo = (item) => {
-    history.push(`/business/${businessId}/${item.personId}`);
   };
 
   const bodyInsertar = (
@@ -204,42 +201,12 @@ export const TableNameScreen = () => {
   const bodyEdit = (
     <div className={styles.modal}>
       <h3>Edit Item</h3>
-
-      <br />
-      <TextField
-        className={styles.inputMaterial}
-        label="Email"
-        name="email"
-        onChange={handleInputChange}
-        value={itemSelect && itemSelect.email}
-      />
       <TextField
         className={styles.inputMaterial}
         label="Name"
         name="name"
         onChange={handleInputChange}
         value={itemSelect && itemSelect.name}
-      />
-      <TextField
-        className={styles.inputMaterial}
-        label="Phone"
-        name="phone"
-        onChange={handleInputChange}
-        value={itemSelect && itemSelect.phone}
-      />
-      <TextField
-        className={styles.inputMaterial}
-        label="Role"
-        name="role"
-        onChange={handleInputChange}
-        value={itemSelect && itemSelect.role}
-      />
-      <TextField
-        className={styles.inputMaterial}
-        label="Join Date"
-        name="join_date"
-        onChange={handleInputChange}
-        value={itemSelect && itemSelect.join_date}
       />
       <br />
       <div align="right">
@@ -307,18 +274,13 @@ export const TableNameScreen = () => {
               tooltip: "Delete Item",
               onClick: (evento, rowData) => selectItem(rowData, "eliminar"),
             },
-            {
-              icon: "search",
-              tooltip: "Info",
-              onClick: (evento, rowData) => handleInfo(rowData),
-            },
           ]}
           options={{
             actionsColumnIndex: -1,
           }}
         />
       ) : (
-        data.map((item) => (
+        events.map((item) => (
           <div className="d-flex row-cols-1">
             <div className="row row-cols-1 row-cols-lg-2 g-3 g-lg-2 my-3">
               <div className="card col">

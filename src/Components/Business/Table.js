@@ -4,6 +4,13 @@ import { Redirect, useHistory } from "react-router-dom";
 import MaterialTable from "material-table";
 import { Modal, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  businessStartDelete,
+  businessStartLoading,
+  businessStartUpdate,
+  eventStartAddNew,
+} from "../../actions/business";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -27,7 +34,9 @@ const useStyles = makeStyles((theme) => ({
 
 export const Table = () => {
   const history = useHistory();
-
+  const dispatch = useDispatch();
+  const { business } = useSelector((state) => state.businessScreen);
+  console.log(business);
   const columns = [
     {
       title: "Name",
@@ -41,6 +50,7 @@ export const Table = () => {
   const [modalInst, setModalInst] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+  const [tableView, setTableView] = useState(true);
 
   const [itemSelect, setItemSelect] = useState({
     name: "",
@@ -68,6 +78,8 @@ export const Table = () => {
   };
 
   const getData = async () => {
+    dispatch(businessStartLoading());
+    /*
     await axios
       .get(
         "https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business",
@@ -83,9 +95,13 @@ export const Table = () => {
       .catch((error) => {
         console.error(error);
       });
+      */
   };
 
   const postData = async () => {
+    dispatch(eventStartAddNew({ name: itemSelect.name }));
+    openCloseModal();
+    /*
     await axios
       .post(
         `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business`,
@@ -106,9 +122,17 @@ export const Table = () => {
       .catch((error) => {
         console.error(error);
       });
+      */
   };
 
   const putData = async () => {
+    dispatch(
+      businessStartUpdate(itemSelect.businessId, {
+        name: itemSelect.name,
+      })
+    );
+    openCloseModalEdit();
+    /*
     await axios
       .put(
         `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${itemSelect.businessId}`,
@@ -134,11 +158,14 @@ export const Table = () => {
       })
       .catch((error) => {
         console.error(error);
-      });
+      });*/
   };
 
   const deleteData = async () => {
     console.log(itemSelect.businessId);
+    dispatch(businessStartDelete(itemSelect.businessId));
+    openCloseModalDelete();
+    /*
     await axios
       .delete(
         `https://us4b9c5vv0.execute-api.us-east-1.amazonaws.com/prod/business/${itemSelect.businessId}`,
@@ -157,6 +184,7 @@ export const Table = () => {
       .catch((error) => {
         console.error(error);
       });
+      */
   };
 
   const selectItem = (item, cas) => {
@@ -217,7 +245,7 @@ export const Table = () => {
   const bodyEliminar = (
     <div className={styles.modal}>
       <p>
-        Estás seguro que deseas eliminar el item
+        Estás seguro que deseas eliminar el item{" "}
         <b>{itemSelect && itemSelect.name}</b>?
       </p>
       <div align="right">
@@ -245,35 +273,51 @@ export const Table = () => {
         >
           Create Business
         </button>
-        <button className="btn mt-1">
+        <button onClick={() => setTableView(!tableView)} className="btn mt-1">
           <i className="fas fa-vector-square fa-2x"></i>
         </button>
       </div>
-      <MaterialTable
-        data={data}
-        columns={columns}
-        title="Business"
-        actions={[
-          {
-            icon: "edit",
-            tooltip: "Edit Item",
-            onClick: (evento, rowData) => selectItem(rowData, "editar"),
-          },
-          {
-            icon: "delete",
-            tooltip: "Delete Item",
-            onClick: (evento, rowData) => selectItem(rowData, "eliminar"),
-          },
-          {
-            icon: "search",
-            tooltip: "Info",
-            onClick: (evento, rowData) => handleInfo(rowData),
-          },
-        ]}
-        options={{
-          actionsColumnIndex: -1,
-        }}
-      />
+      {tableView ? (
+        <MaterialTable
+          data={business}
+          columns={columns}
+          title="Business"
+          actions={[
+            {
+              icon: "edit",
+              tooltip: "Edit Item",
+              onClick: (evento, rowData) => selectItem(rowData, "editar"),
+            },
+            {
+              icon: "delete",
+              tooltip: "Delete Item",
+              onClick: (evento, rowData) => selectItem(rowData, "eliminar"),
+            },
+            {
+              icon: "search",
+              tooltip: "Info",
+              onClick: (evento, rowData) => handleInfo(rowData),
+            },
+          ]}
+          options={{
+            actionsColumnIndex: -1,
+          }}
+        />
+      ) : (
+        business.map((item) => (
+          <div className="d-flex row-cols-1">
+            <div className="row row-cols-1 row-cols-lg-2 g-3 g-lg-2 my-3">
+              <div className="card col">
+                <div className="p-3">
+                  <div className="card-body">
+                    <h5 className="card-title">{item.name}</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
       <Modal open={modalInst} onClose={openCloseModal}>
         {bodyInsertar}
       </Modal>
