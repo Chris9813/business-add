@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.js": "/business-add/static/js/main.527eb407.js",
+    "static/js/498.ff6a8844.chunk.js": "/business-add/static/js/498.ff6a8844.chunk.js",
+    "static/js/703.f054b22c.chunk.js": "/business-add/static/js/703.f054b22c.chunk.js",
+    "static/js/478.8c22e800.chunk.js": "/business-add/static/js/478.8c22e800.chunk.js",
+    "index.html": "/business-add/index.html",
+    "main.527eb407.js.map": "/business-add/static/js/main.527eb407.js.map",
+    "498.ff6a8844.chunk.js.map": "/business-add/static/js/498.ff6a8844.chunk.js.map",
+    "703.f054b22c.chunk.js.map": "/business-add/static/js/703.f054b22c.chunk.js.map",
+    "478.8c22e800.chunk.js.map": "/business-add/static/js/478.8c22e800.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.527eb407.js"
+  ]
+}
